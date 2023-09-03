@@ -101,19 +101,3 @@ resource "aws_iam_role" "eks_node_role" {
     ]
   })
 }
-
-# Output the EKS Cluster Configuration
-output "eks_cluster_config" {
-  value = aws_eks_cluster.example
-}
-
-# Output the EKS Node Group Configuration
-output "eks_node_group_config" {
-  value = aws_eks_node_group.example
-}
-
-# Output the VPC ID
-output "vpc_id" {
-  description = "ID of the VPC"
-  value       = aws_vpc.eks_vpc.id
-}

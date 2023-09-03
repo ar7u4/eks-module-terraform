@@ -18,11 +18,6 @@ variable "public_subnet_cidrs" {
   type        = list(string)
 }
 
-variable "private_subnet_cidrs" {
-  description = "List of CIDR blocks for private subnets"
-  type        = list(string)
-}
-
 variable "eks_node_group_desired_capacity" {
   description = "Desired capacity for the EKS node group"
   type        = number

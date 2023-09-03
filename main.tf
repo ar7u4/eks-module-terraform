@@ -13,7 +13,7 @@ resource "aws_subnet" "public_subnet" {
   count                   = length(var.public_subnet_cidrs)
   vpc_id                  = aws_vpc.eks_vpc.id
   cidr_block              = var.public_subnet_cidrs[count.index]
-  availability_zone       = element(["a", "b", "c"], count.index)
+  availability_zone       = "eu-west-3${element(["a", "b", "c"], count.index)}"
   map_public_ip_on_launch = true
 }
 

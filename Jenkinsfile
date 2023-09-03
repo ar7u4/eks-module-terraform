@@ -108,6 +108,20 @@ pipeline{
         //        }
         //     }
         // }
+        stage('Connect to AWS '){
+            when { expression {  params.action == 'create' } }
+            steps{
+
+                script{
+
+                    sh """
+                    aws configure set aws_access_key_id "$ACCESS_KEY"
+                    aws configure set aws_secret_access_key "$SECRET_KEY"
+                    aws configure set region "${params.Region}"
+                    """
+                }
+            }
+        }
         stage('Create EKS Cluster : Terraform'){
             when { expression {  params.action == 'create' } }
             steps{
@@ -116,8 +130,8 @@ pipeline{
                       sh """
                           
                           terraform init                          
-                          terraform plan -var 'access_key=$ACCESS_KEY' -var 'secret_key=$SECRET_KEY' -var --var-file=./config/terraform.tfvars
-                          terraform apply -var 'access_key=$ACCESS_KEY' -var 'secret_key=$SECRET_KEY' -var --var-file=./config/terraform.tfvars --auto-approve 
+                          terraform plan --var-file=./config/terraform.tfvars
+                          terraform apply --var-file=./config/terraform.tfvars --auto-approve 
                          
                       """
                 }
@@ -125,18 +139,15 @@ pipeline{
         }
         stage('Connect to EKS '){
             when { expression {  params.action == 'create' } }
-        steps{
+            steps{
 
-            script{
+                script{
 
-                sh """
-                aws configure set aws_access_key_id "$ACCESS_KEY"
-                aws configure set aws_secret_access_key "$SECRET_KEY"
-                aws configure set region "${params.Region}"
-                aws eks --region ${params.Region} update-kubeconfig --name ${params.cluster}
-                """
+                    sh """
+                    aws eks --region ${params.Region} update-kubeconfig --name ${params.cluster}
+                    """
+                }
             }
-        }
         } 
         // stage('Deployment on EKS Cluster'){
         //     when { expression {  params.action == 'create' } }

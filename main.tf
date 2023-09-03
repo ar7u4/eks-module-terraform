@@ -79,12 +79,14 @@ resource "aws_eks_node_group" "example" {
 
 # Create an IAM policy attachment for AmazonEKSWorkerNodePolicy
 resource "aws_iam_policy_attachment" "AmazonEKSWorkerNodePolicy" {
+  name       = "AmazonEKSWorkerNodePolicyAttachment"
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   roles      = [aws_iam_role.eks_node_role.name]
 }
 
 # Create an IAM policy attachment for AmazonEC2ContainerRegistryReadOnly
 resource "aws_iam_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
+  name       = "AmazonEC2ContainerRegistryReadOnlyAttachment"
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
   roles      = [aws_iam_role.eks_node_role.name]
 }

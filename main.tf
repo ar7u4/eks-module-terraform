@@ -74,8 +74,20 @@ resource "aws_eks_node_group" "example" {
   }
 
   subnet_ids = aws_subnet.public_subnet[*].id
+  node_role_arns = [aws_iam_policy.AmazonEKSWorkerNodePolicy.arn, aws_iam_policy.AmazonEC2ContainerRegistryReadOnly.arn]
 }
 
+# Create an IAM policy attachment for AmazonEKSWorkerNodePolicy
+resource "aws_iam_policy_attachment" "AmazonEKSWorkerNodePolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+  roles      = [aws_iam_role.eks_node_role.name]
+}
+
+# Create an IAM policy attachment for AmazonEC2ContainerRegistryReadOnly
+resource "aws_iam_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  roles      = [aws_iam_role.eks_node_role.name]
+}
 # Create an IAM role for EKS nodes
 resource "aws_iam_role" "eks_node_role" {
   name = "eks-node-role"

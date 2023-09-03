@@ -112,8 +112,6 @@ pipeline{
             when { expression {  params.action == 'create' } }
             steps{
                 script{
-
-                    dir('eks_module') {
                       sh """
                           
                           terraform init                          

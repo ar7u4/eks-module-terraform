@@ -8,21 +8,13 @@ resource "aws_vpc" "eks_vpc" {
   cidr_block = var.vpc_cidr
 }
 
-# Create subnets (public and private)
+# Create subnets (public subnets)
 resource "aws_subnet" "public_subnet" {
   count                   = length(var.public_subnet_cidrs)
   vpc_id                  = aws_vpc.eks_vpc.id
   cidr_block              = var.public_subnet_cidrs[count.index]
   availability_zone       = element(["a", "b", "c"], count.index)
   map_public_ip_on_launch = true
-}
-
-resource "aws_subnet" "private_subnet" {
-  count                   = length(var.private_subnet_cidrs)
-  vpc_id                  = aws_vpc.eks_vpc.id
-  cidr_block              = var.private_subnet_cidrs[count.index]
-  availability_zone       = element(["a", "b", "c"], count.index)
-  map_public_ip_on_launch = false
 }
 
 # Create a security group for EKS nodes
@@ -40,7 +32,7 @@ resource "aws_eks_cluster" "example" {
   role_arn = aws_iam_role.eks_cluster_role.arn
 
   vpc_config {
-    subnet_ids = aws_subnet.private_subnet[*].id
+    subnet_ids = aws_subnet.public_subnet[*].id
   }
 }
 
@@ -81,7 +73,7 @@ resource "aws_eks_node_group" "example" {
     min_size     = var.eks_node_group_min_size
   }
 
-  subnet_ids = aws_subnet.private_subnet[*].id
+  subnet_ids = aws_subnet.public_subnet[*].id
 }
 
 # Create an IAM role for EKS nodes
